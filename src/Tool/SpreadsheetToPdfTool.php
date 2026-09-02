@@ -2,7 +2,7 @@
 
 namespace PhpMcp\Http\Tool;
 
-use Mpdf\Mpdf;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class SpreadsheetToPdfTool extends AbstractSpreadsheetTool
 {
@@ -65,20 +65,14 @@ class SpreadsheetToPdfTool extends AbstractSpreadsheetTool
         $orientation = $args['orientation'] ?? 'landscape';
 
         $spreadsheet = $this->loadSpreadsheet($file);
-        $htmlContent = $this->spreadsheetToHtmlBody($spreadsheet);
 
-        $mpdf = new Mpdf([
-            'mode'          => 'utf-8',
-            'format'        => 'A4',
-            'orientation'   => strtoupper($orientation),
-            'margin_left'   => 10,
-            'margin_right'  => 10,
-            'margin_top'    => 10,
-            'margin_bottom' => 10,
-        ]);
-
-        $mpdf->WriteHTML($htmlContent);
-        $mpdf->Output($outputFile, 'F');
+        $writer = new CnMpdfWriter($spreadsheet);
+        $writer->setOrientation(
+            $orientation === 'portrait'
+                ? PageSetup::ORIENTATION_PORTRAIT
+                : PageSetup::ORIENTATION_LANDSCAPE
+        );
+        $writer->save($outputFile);
 
         return json_encode([
             'success' => true,
