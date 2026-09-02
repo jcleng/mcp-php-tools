@@ -1,5 +1,7 @@
 ### php-mcp-http 简易php实现的mcp服务器
 
+`php-mcp-http` 是一个基于 PHP 实现的轻量级 MCP（Model Context Protocol，模型上下文协议）服务器，同时支持 HTTP（SSE 流式）与 stdio 两种传输方式，内置读取/修改 Excel 文件、执行 PHP 代码、获取当前时间等工具，供 AI 模型或客户端远程调用。
+
 基于 Composer PSR-4 自动加载，命名空间 `PhpMcp\Http`，映射到 `src/` 目录。
 
 ```shell
