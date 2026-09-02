@@ -10,6 +10,7 @@ use PhpMcp\Http\Tool\SpreadsheetReadTool;
 use PhpMcp\Http\Tool\SpreadsheetModifyTool;
 use PhpMcp\Http\Tool\SpreadsheetToPdfTool;
 use PhpMcp\Http\Tool\SpreadsheetToHtmlTool;
+use PhpMcp\Http\Tool\PhpExecuteTool;
 
 $server = new Server([
     new TimeTool(),
@@ -17,6 +18,7 @@ $server = new Server([
     new SpreadsheetModifyTool(),
     new SpreadsheetToPdfTool(),
     new SpreadsheetToHtmlTool(),
+    new PhpExecuteTool(),
 ]);
 
 $server->handleStdin();
