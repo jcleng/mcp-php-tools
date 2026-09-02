@@ -1,0 +1,27 @@
+<?php
+require_once __DIR__ . '/base.php';
+require_once __DIR__ . '/McpServer.php';
+require_once __DIR__ . '/tools/TimeTool.php';
+
+$server = new McpServer([
+    new TimeTool(),
+]);
+
+$method = $_SERVER['REQUEST_METHOD'];
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// 支持 /mcp 和 /index.php/mcp
+if (!preg_match('#/mcp$#', $path)) {
+    http_response_code(404);
+    echo 'Not Found';
+    exit;
+}
+
+if ($method === 'POST') {
+    $server->handlePost();
+} elseif ($method === 'GET') {
+    $server->handleSse();
+} else {
+    http_response_code(405);
+    echo 'Method Not Allowed';
+}
