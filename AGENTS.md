@@ -14,8 +14,13 @@
 src/
   Server.php            核心服务器类（PhpMcp\Http\Server）
   Tool/
-    ToolInterface.php   MCP 工具接口（PhpMcp\Http\Tool\ToolInterface）
-    TimeTool.php        示例工具（PhpMcp\Http\Tool\TimeTool）
+    ToolInterface.php           MCP 工具接口（PhpMcp\Http\Tool\ToolInterface）
+    AbstractSpreadsheetTool.php Excel 工具基类（共享加载/HTML 逻辑）
+    TimeTool.php                示例工具（PhpMcp\Http\Tool\TimeTool）
+    SpreadsheetReadTool.php     读取 xlsx（spreadsheet_read）
+    SpreadsheetModifyTool.php   修改 xlsx（spreadsheet_modify）
+    SpreadsheetToPdfTool.php    xlsx → PDF（spreadsheet_to_pdf）
+    SpreadsheetToHtmlTool.php   xlsx → HTML（spreadsheet_to_html）
 index.php               HTTP 入口
 router.php              内置 Web 服务器路由（PHP -S）
 server.php              stdio 入口
