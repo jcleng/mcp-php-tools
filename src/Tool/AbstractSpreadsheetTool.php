@@ -31,19 +31,19 @@ abstract class AbstractSpreadsheetTool implements ToolInterface
         return null;
     }
 
-    protected function spreadsheetToHtmlBody(Spreadsheet $spreadsheet): string
+    protected function spreadsheetToHtmlBody(Spreadsheet $spreadsheet, int $sheetIndex = 0): string
     {
         $htmlWriter = IOFactory::createWriter($spreadsheet, 'Html');
-        $htmlWriter->setSheetIndex(0);
+        $htmlWriter->setSheetIndex($sheetIndex);
 
         ob_start();
         $htmlWriter->save('php://output');
         return ob_get_clean();
     }
 
-    protected function buildFullHtml(Spreadsheet $spreadsheet): string
+    protected function buildFullHtml(Spreadsheet $spreadsheet, int $sheetIndex = 0): string
     {
-        $body = $this->spreadsheetToHtmlBody($spreadsheet);
+        $body = $this->spreadsheetToHtmlBody($spreadsheet, $sheetIndex);
 
         $header = '<!DOCTYPE html><html><head><meta charset="utf-8">'
             . '<style>'

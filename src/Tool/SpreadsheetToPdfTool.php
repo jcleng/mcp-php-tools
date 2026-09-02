@@ -33,6 +33,11 @@ class SpreadsheetToPdfTool extends AbstractSpreadsheetTool
                         'enum' => ['portrait', 'landscape'],
                         'default' => 'landscape',
                     ],
+                    'sheet_index' => [
+                        'type' => 'integer',
+                        'description' => '工作表索引，默认 0',
+                        'default' => 0,
+                    ],
                 ],
                 'required' => ['file'],
             ],
@@ -63,6 +68,7 @@ class SpreadsheetToPdfTool extends AbstractSpreadsheetTool
         $file = $args['file'];
         $outputFile = $args['output_file'] ?? preg_replace('/\.xlsx$/i', '.pdf', $file);
         $orientation = $args['orientation'] ?? 'landscape';
+        $sheetIndex = $args['sheet_index'] ?? 0;
 
         $spreadsheet = $this->loadSpreadsheet($file);
 
@@ -72,6 +78,7 @@ class SpreadsheetToPdfTool extends AbstractSpreadsheetTool
                 ? PageSetup::ORIENTATION_PORTRAIT
                 : PageSetup::ORIENTATION_LANDSCAPE
         );
+        $writer->setSheetIndex((int) $sheetIndex);
         $writer->save($outputFile);
 
         return json_encode([

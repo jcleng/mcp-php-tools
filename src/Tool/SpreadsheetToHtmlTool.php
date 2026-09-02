@@ -25,6 +25,11 @@ class SpreadsheetToHtmlTool extends AbstractSpreadsheetTool
                         'type' => 'string',
                         'description' => '输出 HTML 文件的绝对路径，默认与原文件同名 .html',
                     ],
+                    'sheet_index' => [
+                        'type' => 'integer',
+                        'description' => '工作表索引，默认 0',
+                        'default' => 0,
+                    ],
                 ],
                 'required' => ['file'],
             ],
@@ -54,9 +59,10 @@ class SpreadsheetToHtmlTool extends AbstractSpreadsheetTool
     {
         $file = $args['file'];
         $outputFile = $args['output_file'] ?? preg_replace('/\.xlsx$/i', '.html', $file);
+        $sheetIndex = $args['sheet_index'] ?? 0;
 
         $spreadsheet = $this->loadSpreadsheet($file);
-        $html = $this->buildFullHtml($spreadsheet);
+        $html = $this->buildFullHtml($spreadsheet, (int) $sheetIndex);
 
         file_put_contents($outputFile, $html);
 
