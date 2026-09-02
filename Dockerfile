@@ -3,7 +3,7 @@ FROM registry.cn-hangzhou.aliyuncs.com/jcleng/gitbuild-php:8.1-cli
 WORKDIR /app
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY composer.json composer.lock ./
+COPY composer.json ./
 RUN composer install --no-dev --no-interaction --prefer-dist
 
 COPY . .
