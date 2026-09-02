@@ -21,6 +21,7 @@ src/
     SpreadsheetModifyTool.php   修改 xlsx（spreadsheet_modify）
     SpreadsheetToPdfTool.php    xlsx → PDF（spreadsheet_to_pdf）
     SpreadsheetToHtmlTool.php   xlsx → HTML（spreadsheet_to_html）
+    SpreadsheetCreateTool.php   创建空 xlsx（spreadsheet_create）
 index.php               HTTP 入口
 router.php              内置 Web 服务器路由（PHP -S）
 server.php              stdio 入口
