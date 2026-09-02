@@ -1,6 +1,8 @@
 <?php
 
-class TimeTool
+namespace PhpMcp\Http\Tool;
+
+class TimeTool implements ToolInterface
 {
     public function name(): string
     {

@@ -1,0 +1,14 @@
+{
+    "name": "php-mcp/php-mcp-http",
+    "description": "简易PHP实现的MCP服务器",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "PhpMcp\\Http\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    }
+}

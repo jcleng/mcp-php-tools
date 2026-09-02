@@ -1,6 +1,10 @@
 <?php
 
-class McpServer
+namespace PhpMcp\Http;
+
+use PhpMcp\Http\Tool\ToolInterface;
+
+class Server
 {
     private array $tools;
 
@@ -23,12 +27,11 @@ class McpServer
         $id = $request['id'] ?? null;
 
         switch ($method) {
-
             case 'initialize':
                 $this->jsonResponse($id, [
                     'protocolVersion' => '2024-11-05',
                     'capabilities' => [
-                        'tools' => new stdClass(),
+                        'tools' => new \stdClass(),
                     ],
                     'serverInfo' => [
                         'name' => 'php-mcp-http',
@@ -38,7 +41,7 @@ class McpServer
                 return;
 
             case 'tools/list':
-                $list = array_map(fn($t) => $t->definition(), $this->tools);
+                $list = array_map(fn(ToolInterface $t) => $t->definition(), $this->tools);
                 $this->jsonResponse($id, ['tools' => $list]);
                 return;
 
@@ -79,11 +82,66 @@ class McpServer
         echo "event: ready\ndata: {\"status\":\"connected\"}\n\n";
         flush();
 
-        // 保持连接 30 秒心跳
         for ($i = 0; $i < 30; $i++) {
             echo "event: heartbeat\ndata: {\"ts\":" . time() . "}\n\n";
             flush();
             sleep(1);
+        }
+    }
+
+    public function handleStdin(): void
+    {
+        $in = fopen('php://stdin', 'r');
+        while (true) {
+            $line = fgets($in);
+            if ($line === false) {
+                break;
+            }
+
+            $request = json_decode($line, true);
+            if (!$request) {
+                continue;
+            }
+
+            $method = $request['method'] ?? '';
+            $id = $request['id'] ?? null;
+
+            if ($method === 'initialize') {
+                $this->stdioRespond($id, [
+                    'protocolVersion' => '2024-11-05',
+                    'capabilities' => [
+                        'tools' => new \stdClass(),
+                    ],
+                    'serverInfo' => [
+                        'name' => 'php-mcp-server',
+                        'version' => '1.0.0',
+                    ],
+                ]);
+            }
+
+            if ($method === 'tools/list') {
+                $toolList = array_map(fn(ToolInterface $t) => $t->definition(), $this->tools);
+                $this->stdioRespond($id, ['tools' => $toolList]);
+            }
+
+            if ($method === 'tools/call') {
+                $toolName = $request['params']['name'] ?? '';
+                $args = $request['params']['arguments'] ?? [];
+
+                foreach ($this->tools as $tool) {
+                    if ($tool->name() === $toolName) {
+                        $result = $tool->execute($args);
+                        $this->stdioRespond($id, [
+                            'content' => [
+                                ['type' => 'text', 'text' => $result],
+                            ],
+                        ]);
+                        continue 2;
+                    }
+                }
+
+                $this->stdioRespond($id, ['error' => 'Tool not found']);
+            }
         }
     }
 
@@ -108,5 +166,15 @@ class McpServer
                 'message' => $msg,
             ],
         ], JSON_UNESCAPED_UNICODE);
+    }
+
+    private function stdioRespond($id, $result): void
+    {
+        $resp = [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => $result,
+        ];
+        fwrite(STDOUT, json_encode($resp) . "\n");
     }
 }
