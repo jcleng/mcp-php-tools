@@ -3,14 +3,17 @@
 namespace PhpMcp\Http;
 
 use PhpMcp\Http\Tool\ToolInterface;
+use PhpMcp\Http\Prompt\PromptInterface;
 
 class Server
 {
     private array $tools;
+    private array $prompts;
 
-    public function __construct(array $tools)
+    public function __construct(array $tools, array $prompts = [])
     {
         $this->tools = $tools;
+        $this->prompts = $prompts;
     }
 
     public function handlePost(): void
@@ -28,11 +31,15 @@ class Server
 
         switch ($method) {
             case 'initialize':
+                $capabilities = [
+                    'tools' => new \stdClass(),
+                ];
+                if ($this->prompts) {
+                    $capabilities['prompts'] = new \stdClass();
+                }
                 $this->jsonResponse($id, [
                     'protocolVersion' => '2024-11-05',
-                    'capabilities' => [
-                        'tools' => new \stdClass(),
-                    ],
+                    'capabilities' => $capabilities,
                     'serverInfo' => [
                         'name' => 'php-mcp-http',
                         'version' => '1.0.0',
@@ -43,6 +50,32 @@ class Server
             case 'tools/list':
                 $list = array_map(fn(ToolInterface $t) => $t->definition(), $this->tools);
                 $this->jsonResponse($id, ['tools' => $list]);
+                return;
+
+            case 'prompts/list':
+                $list = array_map(fn(PromptInterface $p) => [
+                    'name' => $p->name(),
+                    'description' => $p->description(),
+                    'arguments' => $p->arguments(),
+                ], $this->prompts);
+                $this->jsonResponse($id, ['prompts' => $list]);
+                return;
+
+            case 'prompts/get':
+                $name = $request['params']['name'] ?? '';
+                $arguments = $request['params']['arguments'] ?? [];
+
+                foreach ($this->prompts as $prompt) {
+                    if ($prompt->name() === $name) {
+                        $this->jsonResponse($id, [
+                            'description' => $prompt->description(),
+                            'messages' => $prompt->getMessages($arguments),
+                        ]);
+                        return;
+                    }
+                }
+
+                $this->jsonError($id, "Prompt '{$name}' not found");
                 return;
 
             case 'tools/call':
@@ -107,11 +140,15 @@ class Server
             $id = $request['id'] ?? null;
 
             if ($method === 'initialize') {
+                $capabilities = [
+                    'tools' => new \stdClass(),
+                ];
+                if ($this->prompts) {
+                    $capabilities['prompts'] = new \stdClass();
+                }
                 $this->stdioRespond($id, [
                     'protocolVersion' => '2024-11-05',
-                    'capabilities' => [
-                        'tools' => new \stdClass(),
-                    ],
+                    'capabilities' => $capabilities,
                     'serverInfo' => [
                         'name' => 'php-mcp-server',
                         'version' => '1.0.0',
@@ -122,6 +159,32 @@ class Server
             if ($method === 'tools/list') {
                 $toolList = array_map(fn(ToolInterface $t) => $t->definition(), $this->tools);
                 $this->stdioRespond($id, ['tools' => $toolList]);
+            }
+
+            if ($method === 'prompts/list') {
+                $promptList = array_map(fn(PromptInterface $p) => [
+                    'name' => $p->name(),
+                    'description' => $p->description(),
+                    'arguments' => $p->arguments(),
+                ], $this->prompts);
+                $this->stdioRespond($id, ['prompts' => $promptList]);
+            }
+
+            if ($method === 'prompts/get') {
+                $promptName = $request['params']['name'] ?? '';
+                $arguments = $request['params']['arguments'] ?? [];
+
+                foreach ($this->prompts as $prompt) {
+                    if ($prompt->name() === $promptName) {
+                        $this->stdioRespond($id, [
+                            'description' => $prompt->description(),
+                            'messages' => $prompt->getMessages($arguments),
+                        ]);
+                        continue 2;
+                    }
+                }
+
+                $this->stdioRespond($id, ['error' => 'Prompt not found']);
             }
 
             if ($method === 'tools/call') {
