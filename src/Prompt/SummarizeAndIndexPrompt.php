@@ -32,7 +32,7 @@ class SummarizeAndIndexPrompt implements PromptInterface
 
     public function getMessages(array $arguments = []): array
     {
-        $title = $arguments['title'] ?? 'summary';
+        $title = $arguments['title'] ?? '当前项目标题';
         $projectDir = $arguments['project_dir'] ?? getcwd();
         $envDir = getenv('ARG_BASE_DIR');
 
@@ -42,7 +42,7 @@ class SummarizeAndIndexPrompt implements PromptInterface
 
         $safeName = preg_replace('/[^\w\-]+/u', '_', $title);
         if ($safeName === '' || $safeName === null) {
-            $safeName = 'summary';
+            $safeName = '当前项目标题';
         }
         $filename = $safeName . '_' . date('Ymd_His') . '.md';
         $filePath = rtrim($envDir, '/') . '/' . $filename;
