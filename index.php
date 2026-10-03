@@ -13,6 +13,7 @@ use PhpMcp\Http\Tool\PhpExecuteTool;
 use PhpMcp\Http\Tool\SpreadsheetCreateTool;
 use PhpMcp\Http\Tool\DingTalkNotifyTool;
 use PhpMcp\Http\Prompt\ReadXlsxPrompt;
+use PhpMcp\Http\Prompt\UseProxyPrompt;
 
 $server = new Server([
     new TimeTool(),
@@ -25,6 +26,7 @@ $server = new Server([
     new DingTalkNotifyTool(),
 ], [
     new ReadXlsxPrompt(),
+    new UseProxyPrompt(),
 ]);
 
 $method = $_SERVER['REQUEST_METHOD'];
