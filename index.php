@@ -11,6 +11,7 @@ use PhpMcp\Http\Tool\SpreadsheetToPdfTool;
 use PhpMcp\Http\Tool\SpreadsheetToHtmlTool;
 use PhpMcp\Http\Tool\PhpExecuteTool;
 use PhpMcp\Http\Tool\SpreadsheetCreateTool;
+use PhpMcp\Http\Tool\DingTalkNotifyTool;
 use PhpMcp\Http\Prompt\ReadXlsxPrompt;
 
 $server = new Server([
@@ -21,6 +22,7 @@ $server = new Server([
     new SpreadsheetToHtmlTool(),
     new SpreadsheetCreateTool(),
     new PhpExecuteTool(),
+    new DingTalkNotifyTool(),
 ], [
     new ReadXlsxPrompt(),
 ]);

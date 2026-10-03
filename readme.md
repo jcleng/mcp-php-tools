@@ -40,6 +40,24 @@ docker run -p 8087:8087 php-mcp-http
 | `spreadsheet_to_html` | 将 xlsx 文件转换为 HTML 文件 | `file`：源 xlsx 文件绝对路径 | `output_file`：输出 HTML 路径；`sheet_index`：工作表索引（默认 0） |
 | `spreadsheet_create` | 创建空的 xlsx 文件 | `file`：输出 xlsx 文件绝对路径 | `sheet_name`：工作表名称（默认 Sheet1） |
 | `php_execute` | 执行 PHP 代码或脚本文件 | —（`code` 或 `file` 至少填一个） | `code`：要执行的 PHP 代码字符串；`file`：要执行的 PHP 文件绝对路径；`timeout`：执行超时秒数（默认 30） |
+| `dingtalk_notify` | 发送钉钉机器人文本通知 | `content`：要发送的通知文本内容 | —（`access_token` 通过环境变量 `DINGTALK_ACCESS_TOKEN` 配置，见下方说明） |
+
+### 环境变量配置
+
+| 环境变量 | 说明 | 默认值 |
+| --- | --- | --- |
+| `DINGTALK_ACCESS_TOKEN` | 钉钉机器人 Webhook 的 `access_token`，用于 `dingtalk_notify` 工具发送通知 | 无（未配置时调用会返回错误提示） |
+
+启动服务器前导出该变量即可：
+
+```shell
+export DINGTALK_ACCESS_TOKEN=899f60d0fa233202c38f563abcc6ab57a2624b857eec911ff93369257eff04db
+php ./server.php
+# 或 HTTP 模式
+PHP_CLI_SERVER_WORKERS=20 php -S 0.0.0.0:8087 router.php
+```
+
+> 钉钉机器人 Webhook 地址为 `https://oapi.dingtalk.com/robot/send?access_token=<TOKEN>`，`access_token` 通过环境变量传入，不会硬编码在源码中。
 
 ### 项目结构
 
@@ -57,6 +75,7 @@ src/
     SpreadsheetToHtmlTool.php   xlsx → HTML
     SpreadsheetCreateTool.php   创建空 xlsx
     PhpExecuteTool.php          执行 PHP 代码（php_execute）
+    DingTalkNotifyTool.php      发送钉钉通知（dingtalk_notify）
 index.php               HTTP 入口
 router.php              内置服务器路由
 server.php              stdio 入口
