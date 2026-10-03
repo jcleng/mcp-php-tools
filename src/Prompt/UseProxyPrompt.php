@@ -6,7 +6,7 @@ class UseProxyPrompt implements PromptInterface
 {
     public function name(): string
     {
-        return '使用代理';
+        return 'use_proxy';
     }
 
     public function description(): ?string
