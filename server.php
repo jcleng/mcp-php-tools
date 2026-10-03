@@ -16,6 +16,7 @@ use PhpMcp\Http\Tool\DingTalkNotifyTool;
 use PhpMcp\Http\Prompt\ReadXlsxPrompt;
 use PhpMcp\Http\Prompt\UseProxyPrompt;
 use PhpMcp\Http\Prompt\SummarizeAndIndexPrompt;
+use PhpMcp\Http\Prompt\SummarizeUsePrompt;
 
 $server = new Server([
     new TimeTool(),
@@ -30,6 +31,7 @@ $server = new Server([
     new ReadXlsxPrompt(),
     new UseProxyPrompt(),
     new SummarizeAndIndexPrompt(),
+    new SummarizeUsePrompt(),
 ]);
 
 $server->handleStdin();
