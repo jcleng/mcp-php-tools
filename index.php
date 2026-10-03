@@ -14,6 +14,7 @@ use PhpMcp\Http\Tool\SpreadsheetCreateTool;
 use PhpMcp\Http\Tool\DingTalkNotifyTool;
 use PhpMcp\Http\Prompt\ReadXlsxPrompt;
 use PhpMcp\Http\Prompt\UseProxyPrompt;
+use PhpMcp\Http\Prompt\SummarizeAndIndexPrompt;
 
 $server = new Server([
     new TimeTool(),
@@ -27,6 +28,7 @@ $server = new Server([
 ], [
     new ReadXlsxPrompt(),
     new UseProxyPrompt(),
+    new SummarizeAndIndexPrompt(),
 ]);
 
 $method = $_SERVER['REQUEST_METHOD'];
