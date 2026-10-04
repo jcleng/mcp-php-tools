@@ -16,7 +16,7 @@ class DingTalkNotifyTool implements ToolInterface
     {
         return [
             'name' => $this->name(),
-            'description' => '发送钉钉机器人文本通知，access_token 通过环境变量 DINGTALK_ACCESS_TOKEN 配置',
+            'description' => '发送钉钉机器人文本通知',
             'inputSchema' => [
                 'type' => 'object',
                 'properties' => [
